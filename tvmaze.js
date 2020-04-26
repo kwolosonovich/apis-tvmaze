@@ -18,23 +18,30 @@
       }
  */
 async function searchShows(query) {
-  // TODO: Make an ajax request to the searchShows api.  Remove
-  // hard coded data.
+  // Searches for shows using the tvmaze api
 
+  // populate the query string
   const qString = `http://api.tvmaze.com/search/shows?q=${query}`
   
+
+    // make the get request
     let response = await axios.get(qString);
+
     var parseRes = function(response) {
+      // parses the response from the tvmaze api
 
-        let showArr = [
-          {
-            id: undefined,
-            name: undefined,
-            summary: undefined,
-            image: "images/default.png",
-          },
-        ];
 
+      // structure to hold query results
+      let showArr = [
+        {
+          id: undefined,
+          name: undefined,
+          summary: undefined,
+          image: "images/default.png",
+        },
+      ];
+
+      // assign attributes to the object
       let id = response.data[0].show.id;
       let name = response.data[0].show.name;
       let summary = response.data[0].show.summary;
@@ -45,13 +52,12 @@ async function searchShows(query) {
       showArr[0].image = image
       return showArr
     }
+
+    // get the query results
     var showArr = parseRes(response)
+
     return showArr
 }
-
-
-
-
 
 /** Populate shows list:
  *     - given list of shows, add shows to DOM
@@ -106,15 +112,17 @@ $("#search-form").on("submit", async function handleSearch (evt) {
 });
 
 
-/** Given a show ID, return list of episodes:
- *      { id, name, season, number }
- */
-
 async function getEpisodes(id) {
+  // searches the api for show episodes using the show ID
   let qString = `http://api.tvmaze.com/shows/${show_id}/episodes`
 
+  // make the request
   let response = await axios.get(qString);
+
+
+  // parses response results 
   var parseRes = function (response) {
+    // array with an object to hold results
     let episodesArr = [
       {
         id: undefined,
@@ -124,6 +132,8 @@ async function getEpisodes(id) {
       },
     ];
 
+
+    // assign atributes to the object
     let id = response.data[0].id;
     let name = response.data[0].name;
     let season = response.data[0].season;
@@ -135,13 +145,11 @@ async function getEpisodes(id) {
     return episodesArr;
   };
 
+  // get results
   const getEpisodes = parseRes(response)
   return getEpisodes
+}
 
+const populateEpisodes = () => {
 
-  // TODO: get episodes from tvmaze
-  //       you can get this by making GET request to
-  //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
-
-  // TODO: return array-of-episode-info, as described in docstring above
 }
