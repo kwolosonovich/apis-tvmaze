@@ -69,6 +69,8 @@ function populateShows(shows) {
            <div class="card-body">
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
+
+             <button id="episodes-btn" type="button">Show Episodes</button>
            </div>
          </div>
        </div>
@@ -76,6 +78,12 @@ function populateShows(shows) {
     );
 
     $showsList.append($item);
+    // const episodesBtn = document.getElementById('episodes-btn')
+    // episodesBtn.addEventListener('click', function(e) {
+    //   e.preventDefault()
+    //   appen
+    // })
+
   }
 }
 
