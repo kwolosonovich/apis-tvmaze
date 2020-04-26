@@ -111,6 +111,34 @@ $("#search-form").on("submit", async function handleSearch (evt) {
  */
 
 async function getEpisodes(id) {
+  let qString = `http://api.tvmaze.com/shows/${show_id}/episodes`
+
+  let response = await axios.get(qString);
+  var parseRes = function (response) {
+    let episodesArr = [
+      {
+        id: undefined,
+        name: undefined,
+        season: undefined,
+        number: undefined,
+      },
+    ];
+
+    let id = response.data[0].id;
+    let name = response.data[0].name;
+    let season = response.data[0].season;
+    let number = response.data[0].number;
+    episodesArr[0].id = id;
+    episodesArr[0].name = name;
+    episodesArr[0].season = season;
+    episodesArr[0].number = number;
+    return episodesArr;
+  };
+
+  const getEpisodes = parseRes(response)
+  return getEpisodes
+
+
   // TODO: get episodes from tvmaze
   //       you can get this by making GET request to
   //       http://api.tvmaze.com/shows/SHOW-ID-HERE/episodes
