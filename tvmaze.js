@@ -1,22 +1,3 @@
-/** Given a query string, return array of matching shows:
- *     { id, name, summary, episodesUrl }
- */
-
-
-/** Search Shows
- *    - given a search term, search for tv shows that
- *      match that query.  The function is async show it
- *       will be returning a promise.
- *
- *   - Returns an array of objects. Each object should include
- *     following show information:
- *    {
-        id: <show id>,
-        name: <show name>,
-        summary: <show summary>,
-        image: <an image from the show data, or a default imege if no image exists, (image isn't needed until later)>
-      }
- */
 async function searchShows(query) {
   // Searches for shows using the tvmaze api
 
@@ -96,10 +77,6 @@ function populateShows(shows) {
   }
 }
 
-/** Handle search form submission:
- *    - hide episodes area
- *    - get list of matching shows and show in shows list
- */
 
 $("#search-form").on("submit", async function handleSearch (evt) {
   evt.preventDefault();
@@ -154,13 +131,17 @@ async function getEpisodes(id) {
 
 }
 
+// create new list items for each episode and append to UL 
 const populateEpisodes = (episodes) => { 
   const list = document.getElementById('episodes-list')
   const episodeArea = document.getElementById("episodes-area");
 
+  // iterate over episode list
   for (let episode of episodes) {
-    let item = `<li>${episode.name} + " season" + ${episode.season}+", number "+ ${episode.number}</li>`
+    let item = document.createElement('li')
+    item.innerText = `${episode.name} (season${episode.season}, number ${episode.number})`
     list.append(item)
   }
+  // replace UL style hidden with insline 
   episodeArea.style.display = "inline"
 }
