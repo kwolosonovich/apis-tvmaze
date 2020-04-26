@@ -27,7 +27,7 @@ async function searchShows(query) {
     // make the get request
     let response = await axios.get(qString);
 
-    var parseRes = function(response) {
+    let parseRes = function(response) {
       // parses the response from the tvmaze api
 
 
@@ -76,23 +76,25 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
 
-             <button id="episodes-btn" type="button">Show Episodes</button>
+             <button id="episodes-btn" data-show-id="${show.id}" type="button">Show Episodes</button>
            </div>
          </div>
        </div>
       `
     );
 
-    $showsList.append($item);
-    // const episodesBtn = document.getElementById('episodes-btn')
-    // episodesBtn.addEventListener('click', function(e) {
-    //   e.preventDefault()
-    //   appen
-    // })
+     let showId = undefined
 
+    $showsList.append($item);
+    let episodesBtn = document.getElementById('episodes-btn')
+    episodesBtn.addEventListener("click", async function(e) {
+      e.preventDefault()
+      showId = $(this).attr("data-show-id")
+      const episodes = await getEpisodes(showId);
+      populateEpisodes(episodes);
+      })
   }
 }
-
 
 /** Handle search form submission:
  *    - hide episodes area
@@ -111,45 +113,54 @@ $("#search-form").on("submit", async function handleSearch (evt) {
   populateShows(shows);
 });
 
+class EpisodeObj {
+  constructor(id, name, season, number) {
+  this.id = id
+  this.name = name        
+  this.number = number
+  this.season = season
+  }
+}
 
 async function getEpisodes(id) {
   // searches the api for show episodes using the show ID
-  let qString = `http://api.tvmaze.com/shows/${show_id}/episodes`
+  const qString = `http://api.tvmaze.com/shows/${id}/episodes`
+
 
   // make the request
   let response = await axios.get(qString);
-
+ 
 
   // parses response results 
   var parseRes = function (response) {
-    // array with an object to hold results
-    let episodesArr = [
-      {
-        id: undefined,
-        name: undefined,
-        season: undefined,
-        number: undefined,
-      },
-    ];
+    // array with results objects
+      let episodeArr = []
 
-
-    // assign atributes to the object
-    let id = response.data[0].id;
-    let name = response.data[0].name;
-    let season = response.data[0].season;
-    let number = response.data[0].number;
-    episodesArr[0].id = id;
-    episodesArr[0].name = name;
-    episodesArr[0].season = season;
-    episodesArr[0].number = number;
-    return episodesArr;
+    let episodeData = response.data
+    //create new object using class for each episode
+    for (episode of episodeData) {
+      let e = new EpisodeObj(
+        episode.id,
+        episode.name,
+        episode.season,
+        episode.number,
+      );
+      episodeArr.push(e)
+    }
+    return episodeArr
   };
+    const episodeArr = parseRes(response)
+    return episodeArr;
 
-  // get results
-  const getEpisodes = parseRes(response)
-  return getEpisodes
 }
 
-const populateEpisodes = () => {
+const populateEpisodes = (episodes) => { 
+  const list = document.getElementById('episodes-list')
+  const episodeArea = document.getElementById("episodes-area");
 
+  for (let episode of episodes) {
+    let item = `<li>${episode.name} + " season" + ${episode.season}+", number "+ ${episode.number}</li>`
+    list.append(item)
+  }
+  episodeArea.style.display = "inline"
 }
