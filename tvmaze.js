@@ -1,6 +1,26 @@
+class EpisodeObj {
+  constructor(id, name, season, number) {
+    this.id = id;
+    this.name = name;
+    this.number = number;
+    this.season = season;
+  }
+}
+
+class ShowObj {
+  constructor (id, name, summary, image) {
+    this.id = id;
+    this.name = name;
+    this.summary = summary; 
+    this.image = image;
+  }
+}
+
+
 async function searchShows(query) {
   // Searches for shows using the tvmaze api
 
+  
   // populate the query string
   const qString = `http://api.tvmaze.com/search/shows?q=${query}`
   
@@ -13,24 +33,16 @@ async function searchShows(query) {
 
 
       // structure to hold query results
-      let showArr = [
-        {
-          id: undefined,
-          name: undefined,
-          summary: undefined,
-          image: "images/default.png",
-        },
-      ];
+      let showArr = []
 
-      // assign attributes to the object
-      let id = response.data[0].show.id;
-      let name = response.data[0].show.name;
-      let summary = response.data[0].show.summary;
-      let image = response.data[0].show.image.medium
-      showArr[0].id = id;
-      showArr[0].name = name 
-      showArr[0].summary = summary
-      showArr[0].image = image
+      let s = new ShowObj(
+        response.data[0].show.id,
+        response.data[0].show.name,
+        response.data[0].show.summary,
+        response.data[0].show.image.medium
+      )
+
+      showArr.push(s)
       return showArr
     }
 
@@ -64,13 +76,12 @@ function populateShows(shows) {
       `
     );
 
-     let showId = undefined
-
     $showsList.append($item);
+
     let episodesBtn = document.getElementById('episodes-btn')
     episodesBtn.addEventListener("click", async function(e) {
       e.preventDefault()
-      showId = $(this).attr("data-show-id")
+      const showId = $(this).attr("data-show-id")
       const episodes = await getEpisodes(showId);
       populateEpisodes(episodes);
       })
@@ -90,14 +101,6 @@ $("#search-form").on("submit", async function handleSearch (evt) {
   populateShows(shows);
 });
 
-class EpisodeObj {
-  constructor(id, name, season, number) {
-  this.id = id
-  this.name = name        
-  this.number = number
-  this.season = season
-  }
-}
 
 async function getEpisodes(id) {
   // searches the api for show episodes using the show ID
